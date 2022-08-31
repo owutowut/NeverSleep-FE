@@ -18,13 +18,16 @@ input::placeholder{
   color: #d1d5db;
 }
 
-tr:nth-child(odd) {
-  background-color: #bfdbfe;
-}
+/*.main {*/
+/*  padding: 16px;*/
+/*  margin-top: 30px;*/
+/*  height: 1500px; !* Used in this example to enable scrolling *!*/
+/*}*/
 
-th{
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
+/*.navbar {*/
+/*  overflow: hidden;*/
+/*  background-color: #333;*/
+/*  position: fixed;*/
+/*  top: 0;*/
+/*  width: 100%;*/
+/*}*/

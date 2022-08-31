@@ -1,10 +1,16 @@
 import Head from 'next/head'
 import Sidebar from "../components/Sidebar";
 import Table from "../components/Table";
-import {Router} from "next/router";
 import Top from "../components/Top";
+import React, {useState} from "react";
 
 export default function Home() {
+    const [searchValue, setSearchValue] = useState('')
+
+    const onChangeSearch = (e)=> {
+        setSearchValue(e)
+    }
+
     return (
         <div>
             <Head>
@@ -14,9 +20,9 @@ export default function Home() {
             </Head>
             <div className='h-full w-full flex bg-gradient-to-b from-blue-600 to-cyan-200'>
                 <Sidebar/>
-                <div className='h-full w-full p-12 bg-blue-100 rounded-bl-[40px] rounded-tl-[40px]'>
-                    <Top className='w-full'/>
-                    <Table/>
+                <div className='space-y-4 h-full w-full p-12 bg-blue-100 rounded-bl-[40px] rounded-tl-[40px]'>
+                    <Top onChangeSearch={onChangeSearch} className='w-full'/>
+                    <Table searchValue={searchValue}/>
                 </div>
             </div>
         </div>

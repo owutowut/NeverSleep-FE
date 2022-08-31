@@ -3,9 +3,9 @@ import React from 'react';
 const NavRoute = () => {
     return (
         <div className='flex space-x-3 text-blue-500'>
-            <label>Project management</label>
+            <label className='cursor-pointer'>Project management</label>
             <label> > </label>
-            <label>Invoice</label>
+            <label className='cursor-pointer'>Invoice</label>
         </div>
     );
 };
