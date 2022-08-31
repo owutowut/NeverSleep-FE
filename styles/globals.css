@@ -19,16 +19,17 @@ input::placeholder{
 }
 
 .sidebar{
-  position: absolute;
   width: 100%;
   height: 100%;
   box-sizing: initial;
   transition: 0.5s;
   padding-left: 30px;
-  background-color: rgb(96 165 250)
+  background-color: rgb(96 165 250);
 }
 .sidebar ul {
   width: 100%;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 .sidebar ul li {
   padding: 8px;
@@ -101,8 +102,8 @@ input::placeholder{
 .navbar span{
   background-color: white;
   opacity: 50%;
-  padding: 20px 20px 15px 20px;
-  width: 250px;
+  padding: 15px 15px 15px 15px;
+  width: 200px;
   text-align: center;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -110,7 +111,7 @@ input::placeholder{
 
 .navbar span.active{
   background-color: white;
-  padding: 20px 20px 15px 20px;
+  padding: 15px 15px 15px 20px;
   width: 250px;
   text-align: center;
   border-top-left-radius: 10px;
@@ -176,4 +177,22 @@ input::placeholder{
   padding-top: 4px;
   padding-bottom: 4px;
   border-radius: 5px;
+}
+
+.toggle span.open,
+.toggle.active span.close
+{
+  display: block;
+}
+.toggle span.close,
+.toggle.active span.open
+{
+  display: none;
+}
+
+.hiddenSidebar{
+  display: none;
+}
+.hiddenSidebar.active{
+  display: block;
 }

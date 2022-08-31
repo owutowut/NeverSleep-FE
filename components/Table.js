@@ -6,7 +6,14 @@ import Box from '@mui/material/Box';
 import { darken, lighten } from '@mui/material/styles';
 
 const users = Users.data.users
-const totalUsers = users.length
+const totalData = {
+    all: users.length,
+    payment: users.filter(user=>user.status.name_status==='รอชำระเงิน').length,
+    cancel: users.filter(user=>user.status.name_status==='ยกเลิก').length,
+    review: users.filter(user=>user.status.name_status==='รอตรวจสอบ').length,
+    failed: users.filter(user=>user.status.name_status==='ไม่สำเร็จ').length,
+    success: users.filter(user=>user.status.name_status==='จ่ายแล้ว').length,
+}
 
 const getBackgroundColor = (color, mode) =>
     mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.6);
@@ -22,7 +29,7 @@ const DataTable = ({filterStatus, searchValue})=> {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
 
-    const totalPage = totalUsers/pageSize
+    const totalPage = totalData.all/pageSize
     const search = searchValue
     const status = filterStatus
 
@@ -90,7 +97,7 @@ const DataTable = ({filterStatus, searchValue})=> {
 
     return (
         <div className='px-6'>
-            <div className='flex w-full justify-between h-28 my-4'>
+            <div className='mb-12 space-y-4 h-28 my-4 w-full lg:mb-4 lg:flex lg:justify-between'>
                 <div className='flex self-end space-x-3'>
                     <p className='self-center'> Show </p>
                     <select onChange={handleChange} className='cursor-pointer px-4 py-1 bg-gray-100 rounded-md border border-gray-300 font-medium'>
@@ -100,13 +107,15 @@ const DataTable = ({filterStatus, searchValue})=> {
                     </select>
                     <p className='self-center'> Entries </p>
                 </div>
-                <div className='flex self-start text-red-600 bg-gray-100 space-x-4 py-4 px-8 rounded-xl'>
-                    <p className='self-start'>ยอดชำระทั้งหมด</p>
-                    <p className='text-2xl font-bold self-center'> {totalPayment}</p>
-                    <p className='self-end'>บาท</p>
+                <div className='w-full py-2 px-4 text-center text-red-600 lg:flex lg:justify-end'>
+                    <div className='space-y-1 bg-gray-100 rounded-xl lg:space-x-4 lg:flex lg:self-start lg:py-2 lg:px-10'>
+                        <p className='lg:self-start lg:whitespace-nowrap'>ยอดชำระทั้งหมด</p>
+                        <p className='text-xl font-bold lg:text-2xl lg:self-center'> {totalPayment}</p>
+                        <p className='lg:self-end lg:whitespace-nowrap'>บาท</p>
+                    </div>
                 </div>
             </div>
-            <div className='flex justify-center overflow-hidden'>
+            <div className='pb-2 flex justify-center overflow-hidden '>
                 <Box
                     sx={{
                         height: 570,
@@ -165,7 +174,7 @@ const DataTable = ({filterStatus, searchValue})=> {
                     />
                 </Box>
             </div>
-            <div className='w-full flex justify-center pb-6'>
+            <div className='pb-6 w-full flex justify-center lg:pb-6'>
                 <Stack spacing={2}>
                     <Pagination count={totalPage} color="primary" onChange={onChangePage}/>
                 </Stack>
@@ -194,55 +203,46 @@ const Table = ({searchValue}) => {
         active()
     },[status])
 
-    const filterAll = () => {
-        setStatus('ทั้งหมด');
-    };
-    const filterSuccess = () => {
-        setStatus('จ่ายแล้ว');
-    };
-    const filterPendingPayment = () => {
-        setStatus('รอชำระเงิน');
-    };
-    const filterCancel = () => {
-        setStatus();
-    };
-    const filterFailed = () => {
-        setStatus('ไม่สำเร็จ');
-    };
-    const filterPendingReview = () => {
-        setStatus('รอตรวจสอบ');
-    };
-
     return (
         <div className='overflow-hidden'>
             <div className='space-x-2'>
                 <span className='opacity-90 font-bold text-xl'>Invoice</span>
                 <span className='text-blue-500'>(ใบแจ้งหนี้)</span>
             </div>
-            <div className='pb-2 rounded-xl relative my-4'>
-                <div className='w-full'>
-                    <div className='navbar'>
-                        <span className='listNav active' onClick={filterAll}>
-                            <p className='all'>ทั้งหมด ({totalUsers})</p>
+            <div className='space-y-4 rounded-xl lg:relative lg:pb-2 lg:my-12'>
+                <div className='w-full hidden lg:block'>
+                    <div className='navbar lg:h-6'>
+                        <span className='listNav active' onClick={()=>setStatus('ทั้งหมด')}>
+                            <p className='all'>ทั้งหมด ({totalData.all})</p>
                         </span>
-                        <span className='listNav' onClick={filterPendingPayment}>
-                            <p className='allPayment'>ชำระทั้งหมด ({totalUsers})</p>
+                        <span className='listNav' onClick={()=>setStatus('จ่ายแล้ว')}>
+                            <p className='allPayment'>ชำระทั้งหมด ({totalData.payment})</p>
                         </span>
-                        <span className='listNav' onClick={filterPendingReview}>
-                            <p className='waitingReview'>รอตรวจสอบ ({totalUsers})</p>
+                        <span className='listNav' onClick={()=>setStatus('รอตรวจสอบ')}>
+                            <p className='waitingReview'>รอตรวจสอบ ({totalData.review})</p>
                         </span>
-                        <span className='listNav' onClick={filterSuccess}>
-                            <p className='success'>จ่ายแล้ว ({totalUsers})</p>
+                        <span className='listNav' onClick={()=>setStatus('จ่ายแล้ว')}>
+                            <p className='success'>จ่ายแล้ว ({totalData.success})</p>
                         </span>
-                        <span className='listNav' onClick={filterFailed}>
-                            <p className='failed'>ไม่สำเร็จ ({totalUsers})</p>
+                        <span className='listNav' onClick={()=>setStatus('ไม่สำเร็จ')}>
+                            <p className='failed'>ไม่สำเร็จ ({totalData.failed})</p>
                         </span>
-                        <span className='listNav' onClick={filterCancel}>
-                            <p className='cancel'>ยกเลิก ({totalUsers})</p>
+                        <span className='listNav' onClick={()=>setStatus('ยกเลิก')}>
+                            <p className='cancel'>ยกเลิก ({totalData.cancel})</p>
                         </span>
                     </div>
                 </div>
-                <div className='bg-white pt-4 rounded-xl shadow-md'>
+                <div className='bg-white pt-4 rounded-xl shadow-md lg:pt-2'>
+                    <div className='flex w-full justify-center lg:hidden'>
+                        <select className='border border-gray-300 py-1 px-4 rounded-md' onChange={(e)=>setStatus(e.target.value)}>
+                            <option value={'ทั้งหมด'}>ทั้งหมด ({totalData.all})</option>
+                            <option value={'รอชำระเงิน'}>รอชำระเงิน ({totalData.payment})</option>
+                            <option value={'รอตรวจสอบ'}>รอตรวจสอบ ({totalData.review})</option>
+                            <option value={'จ่ายแล้ว'}>จ่ายแล้ว ({totalData.success})</option>
+                            <option value={'ไม่สำเร็จ'}>ไม่สำเร็จ ({totalData.failed})</option>
+                            <option value={'ยกเลิก'}>ยกเลิก ({totalData.cancel})</option>
+                        </select>
+                    </div>
                     <DataTable filterStatus={status} searchValue={searchValue}/>
                 </div>
             </div>
