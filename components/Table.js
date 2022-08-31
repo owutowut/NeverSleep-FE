@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Users from "../public/users.json";
-import MdOutlineTopic from 'react-icons/md'
-import { DataGrid } from '@mui/x-data-grid';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import { darken, lighten } from '@mui/material/styles';
 
@@ -14,14 +14,24 @@ const getBackgroundColor = (color, mode) =>
 const getHoverBackgroundColor = (color, mode) =>
     mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.5);
 
+const slipIcon = () => {
+    return <span>&#128221;</span>
+}
+
 const DataTable = ({filterStatus, searchValue})=> {
     const [page, setPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
 
+    const totalPage = totalUsers/pageSize
     const search = searchValue
     const status = filterStatus
 
+    const onChangePage = (event, value) => {
+        setPage(value-1);
+    };
+
     const handleChange = (event) => {setPageSize(event.target.value)}
+
     const row = users.map((user)=> {
         return {
             id: user.id,
@@ -37,18 +47,49 @@ const DataTable = ({filterStatus, searchValue})=> {
 
     const columns = [
         { field: "id", headerName: "No.", width: "100", headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
-        { field: "code", headerName: "Code", width: "150", headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
-        { field: "project_name", headerName: "Project Name", width: "160", headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
-        { field: "data", headerName: "Date", width: "160", headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
+        { field: "code", headerName: "Code", width: "150", headerClassName: 'headerCSS', headerAlign: 'center', align: "center",
+            renderCell: params => {
+                return <div className='text-blue-400'>{params.row.code}</div>
+            }
+        },
+        { field: "project_name", headerName: "Project Name", width: "160", headerClassName: 'headerCSS', headerAlign: 'center', align: "center",
+            renderCell: params => {
+                return <div className='text-blue-400'>{params.row.project_name}</div>
+            }
+        },
+        { field: "data", headerName: "Date", width: "160", headerClassName: 'headerCSS', headerAlign: 'center', align: "center",
+            renderCell: params => {
+                return <div>{new Date(params.row.data).toLocaleDateString()}</div>
+            }
+        },
         { field: "name", headerName: "Customer Name", width: "180", headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
-        { field: "payment", headerName: "Payment", width: "130",  headerClassName: 'headerCSS', headerAlign: 'center', align: "center"},
-        { field: "slip", headerName: "Slip", width: "70", headerClassName: 'headerCSS', headerAlign: 'center', align: "center",},
-        { field: "status", headerName: "Status", width: "160", headerClassName: 'headerCSS', rowClassName: 'rowCSS', headerAlign: 'center', align: "center"}
+        { field: "payment", headerName: "Payment", width: "130",  headerClassName: 'headerCSS', headerAlign: 'center', align: "center",
+            renderCell: params => {
+                return <div className='text-red-400'>{params.row.payment.toLocaleString()}</div>
+            }
+        },
+        { field: "slip", headerName: "Slip", width: "70", headerClassName: 'headerCSS', headerAlign: 'center', align: "center", renderCell: slipIcon},
+        { field: "status", headerName: "Status", width: "160", headerClassName: 'headerCSS', rowClassName: 'rowCSS', headerAlign: 'center', align: "center",
+            renderCell: params=> {
+                switch (params.row.status) {
+                    case 'รอชำระเงิน':
+                        return <div className='py-1 mx-4 w-full text-center rounded-md bg-yellow-200'>รอชำระเงิน</div>
+                    case 'รอตรวจสอบ':
+                        return <div className='py-1 mx-4 w-full text-center rounded-md bg-purple-200'>รอตรวจสอบ</div>
+                    case 'ไม่สำเร็จ':
+                        return <div className='py-1 mx-4 w-full text-center rounded-md bg-gray-200'>ไม่สำเร็จ</div>
+                    case 'ยกเลิก':
+                        return <div className='py-1 mx-4 w-full text-center rounded-md bg-red-200'>ยกเลิก</div>
+                    default:
+                        return <div className='py-1 mx-4 w-full text-center rounded-md bg-green-200'>จ่ายแล้ว</div>
+                }
+            }
+        }
     ]
     const totalPayment = (users.reduce((a,v) => a+v.payment , 0 )).toLocaleString()
 
     return (
-        <div className='px-8'>
+        <div className='px-6'>
             <div className='flex w-full justify-between h-28 my-4'>
                 <div className='flex self-end space-x-3'>
                     <p className='self-center'> Show </p>
@@ -68,7 +109,7 @@ const DataTable = ({filterStatus, searchValue})=> {
             <div className='flex justify-center overflow-hidden'>
                 <Box
                     sx={{
-                        height: 600,
+                        height: 570,
                         width: '100%',
                         '& .even': {
                             bgcolor: (theme) =>
@@ -120,8 +161,14 @@ const DataTable = ({filterStatus, searchValue})=> {
                         rowHeight={49}
                         pageSize={pageSize}
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                        hideFooter={true}
                     />
                 </Box>
+            </div>
+            <div className='w-full flex justify-center pb-6'>
+                <Stack spacing={2}>
+                    <Pagination count={totalPage} color="primary" onChange={onChangePage}/>
+                </Stack>
             </div>
         </div>
     )
@@ -129,6 +176,23 @@ const DataTable = ({filterStatus, searchValue})=> {
 
 const Table = ({searchValue}) => {
     const [status, setStatus] = useState('ทั้งหมด')
+
+    const active = ()=> {
+        const listNav = document.querySelectorAll('.listNav')
+        for (let i=0; i<listNav.length; i++) {
+            listNav[i].onclick = function () {
+                let j=0;
+                while (j < listNav.length) {
+                    listNav[j++].className = 'listNav'
+                }
+                listNav[i].className = 'listNav active'
+            }
+        }
+    }
+
+    useEffect(()=>{
+        active()
+    },[status])
 
     const filterAll = () => {
         setStatus('ทั้งหมด');
@@ -140,7 +204,7 @@ const Table = ({searchValue}) => {
         setStatus('รอชำระเงิน');
     };
     const filterCancel = () => {
-        setStatus('ยกเลิก');
+        setStatus();
     };
     const filterFailed = () => {
         setStatus('ไม่สำเร็จ');
@@ -155,30 +219,32 @@ const Table = ({searchValue}) => {
                 <span className='opacity-90 font-bold text-xl'>Invoice</span>
                 <span className='text-blue-500'>(ใบแจ้งหนี้)</span>
             </div>
-            <div className='main bg-white pb-2 shadow rounded-xl space-y-2 relative my-4'>
-                <div className='navbar w-full flex justify-center'>
-                    <div className='flex space-x-8 border-t rounded-xl shadow-top bg-white p-6'>
-                        <div onClick={filterAll} className='whitespace-nowrap px-8 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>ทั้งหมด ({totalUsers})</p>
-                        </div>
-                        <div onClick={filterPendingPayment} className='whitespace-nowrap px-8 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>ชำระทั้งหมด ({totalUsers})</p>
-                        </div>
-                        <div onClick={filterPendingReview} className='whitespace-nowrap px-8 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>รอตรวจสอบ ({totalUsers})</p>
-                        </div>
-                        <div onClick={filterSuccess} className='whitespace-nowrap px-8 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>จ่ายแล้ว ({totalUsers})</p>
-                        </div>
-                        <div onClick={filterFailed} className='whitespace-nowrap px-8 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>ไม่สำเร็จ ({totalUsers})</p>
-                        </div>
-                        <div onClick={filterCancel} className='whitespace-nowrap px-12 py-2 bg-blue-400 text-white rounded-md cursor-pointer'>
-                            <p>ยกเลิก ({totalUsers})</p>
-                        </div>
+            <div className='pb-2 rounded-xl relative my-4'>
+                <div className='w-full'>
+                    <div className='navbar'>
+                        <span className='listNav active' onClick={filterAll}>
+                            <p className='all'>ทั้งหมด ({totalUsers})</p>
+                        </span>
+                        <span className='listNav' onClick={filterPendingPayment}>
+                            <p className='allPayment'>ชำระทั้งหมด ({totalUsers})</p>
+                        </span>
+                        <span className='listNav' onClick={filterPendingReview}>
+                            <p className='waitingReview'>รอตรวจสอบ ({totalUsers})</p>
+                        </span>
+                        <span className='listNav' onClick={filterSuccess}>
+                            <p className='success'>จ่ายแล้ว ({totalUsers})</p>
+                        </span>
+                        <span className='listNav' onClick={filterFailed}>
+                            <p className='failed'>ไม่สำเร็จ ({totalUsers})</p>
+                        </span>
+                        <span className='listNav' onClick={filterCancel}>
+                            <p className='cancel'>ยกเลิก ({totalUsers})</p>
+                        </span>
                     </div>
                 </div>
-                <DataTable filterStatus={status} searchValue={searchValue}/>
+                <div className='bg-white pt-4 rounded-xl shadow-md'>
+                    <DataTable filterStatus={status} searchValue={searchValue}/>
+                </div>
             </div>
         </div>
     );

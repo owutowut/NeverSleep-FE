@@ -4,26 +4,50 @@ import {MdPeople} from 'react-icons/md'
 import {FaFileInvoiceDollar} from 'react-icons/fa'
 
 const Sidebar = () => {
+
+    const Active = ()=> {
+        const list = document.querySelectorAll('.list')
+        for (let i=0; i<list.length; i++) {
+            list[i].onclick = function () {
+                let j=0;
+                while (j < list.length) {
+                    list[j++].className = 'list'
+                }
+                list[i].className = 'list active'
+            }
+        }
+    }
+
     return (
-        <div className='text-white w-full h-screen'>
-            <div>
-                <div className='text-3xl px-8 py-14'>NVSL - IMS</div>
-                <div className='w-full'>
-                    <div className='w-full ml-6'>
-                        <ul className='w-full cursor-pointer text-center flex relative py-2 bg-blue-100 rounded-bl-full rounded-tl-full text-gray-800'>
+        <div className='col-span-1 text-white w-full h-full relative'>
+            <div className='sidebar'>
+                <header className='whitespace-nowrap text-3xl px-8 py-14'>NVSL - IMS</header>
+                <ul className='space-y-4'>
+                    <li onClick={Active} className='list'>
+                        <b></b>
+                        <b></b>
+                        <div className='text-center flex relative'>
                             <BsFillBookmarkDashFill className='self-center mx-4'/>
-                            <div>Dashboard</div>
-                        </ul>
-                        <ul className='w-full text-gray-100 cursor-pointer text-center flex relative py-2 text-gray-800'>
-                            <MdPeople color='#d1d5db' className='self-center mx-4'/>
-                            <label className='cursor-pointer'>Partner</label>
-                        </ul>
-                        <ul className='w-full text-gray-100 cursor-pointer text-center flex relative py-2 text-gray-800'>
-                            <FaFileInvoiceDollar color='#d1d5db' className='self-center mx-4'/>
-                            <label className='cursor-pointer'>Invoice</label>
-                        </ul>
-                    </div>
-                </div>
+                            <a className='cursor-pointer'>Dashboard</a>
+                        </div>
+                    </li>
+                    <li onClick={Active} className='list'>
+                        <b></b>
+                        <b></b>
+                        <div className='text-center flex relative'>
+                            <MdPeople className='self-center mx-4'/>
+                            <a className='cursor-pointer'>Partner</a>
+                        </div>
+                    </li>
+                    <li onClick={Active} className='list active'>
+                        <b></b>
+                        <b></b>
+                        <div className='text-center flex relative'>
+                            <FaFileInvoiceDollar className='self-center mx-4'/>
+                            <a className='cursor-pointer'>Invoice</a>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     );
