@@ -215,8 +215,8 @@ const Table = ({searchValue}) => {
                         <span className='listNav active' onClick={()=>setStatus('ทั้งหมด')}>
                             <p className='all'>ทั้งหมด ({totalData.all})</p>
                         </span>
-                        <span className='listNav' onClick={()=>setStatus('จ่ายแล้ว')}>
-                            <p className='allPayment'>ชำระทั้งหมด ({totalData.payment})</p>
+                        <span className='listNav' onClick={()=>setStatus('รอชำระเงิน')}>
+                            <p className='allPayment'>รอชำระเงิน ({totalData.payment})</p>
                         </span>
                         <span className='listNav' onClick={()=>setStatus('รอตรวจสอบ')}>
                             <p className='waitingReview'>รอตรวจสอบ ({totalData.review})</p>
